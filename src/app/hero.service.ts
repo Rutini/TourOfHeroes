@@ -20,6 +20,8 @@ export class HeroService {
     this.messageService.add(`HeroService: fetched hero id=${id}`);
     return of(HEROES.find(hero => hero.id === id));
   }
+  
+  let str: string = 'Hello git';
 
   constructor(
     private http: HttpClient,
