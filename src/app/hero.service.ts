@@ -33,6 +33,11 @@ export class HeroService {
     };
   }
 
+  /** Log a HeroService message with the MessageService */
+  private log(message: string) {
+    this.messageService.add(`HeroService: ${message}`);
+  }
+
   getHeroes(): Observable<Hero[]> {
     return this.http.get<Hero[]>(this.heroesUrl)
       .pipe(
@@ -48,11 +53,6 @@ export class HeroService {
         catchError(this.handleError<Hero>(`getHero id=${id}`))
       )
     );
-  }
-
-  /** Log a HeroService message with the MessageService */
-  private log(message: string) {
-    this.messageService.add(`HeroService: ${message}`);
   }
 
   updateHero(hero: Hero): Observable<any> {
@@ -76,6 +76,17 @@ export class HeroService {
     return this.http.delete<Hero>(url, this.httpOptions).pipe(
       tap(_ => this.log(`deleted hero id=${id}`)),
       catchError(this.handleError<Hero>('deleteHero'))
+    );
+  }
+
+  searchHeroes(term: string): Observable<Hero[]> {
+    if (!term.trim()) {
+      return of([]);
+    }
+
+    return this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      tap(_ => this.log(`found heroes marching ${term}`)),
+      catchError(this.handleError<Hero[]>('searchHero', []))
     );
   }
 }
